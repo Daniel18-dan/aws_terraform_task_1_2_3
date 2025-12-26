@@ -2,6 +2,6 @@ variable "ami_id" {
   default = string
 }
 
-variable "in_type" {
+variable "instance_type" {
   default = string
 }
