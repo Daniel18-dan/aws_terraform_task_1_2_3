@@ -29,7 +29,7 @@ pipeline {
       steps {
         sh '''
           cd task-03
-          terraform plan
+          terraform plan -out=tfplan
         '''
       }
     }
@@ -45,7 +45,7 @@ pipeline {
       steps {
         sh '''
           cd task-03
-          terraform apply -input=false
+          terraform apply tfplan
         '''
       }
     }
