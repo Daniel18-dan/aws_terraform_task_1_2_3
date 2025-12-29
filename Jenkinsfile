@@ -45,7 +45,7 @@ pipeline {
       steps {
         sh '''
           cd task-03
-          terraform apply
+          terraform apply -input=false
         '''
       }
     }
