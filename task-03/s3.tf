@@ -25,6 +25,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
   bucket = aws_s3_bucket.dan123456789_s3_bucket.id
 
   rule {
+    id     = "delete-after-1-day"
     status = "Enabled"
 
     expiration {
@@ -32,3 +33,4 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
     }
   }
 }
+
