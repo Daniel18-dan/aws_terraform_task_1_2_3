@@ -31,9 +31,11 @@ resource "aws_instance" "ec2" {
   ]
 
 tags = {
-  Name = "terraform-EC2"
+  Name        = "terraform-ec2-${var.environment}"
+  Environment = var.environment
+  Owner       = var.owner
 }
-}
+
 
 #SG for alb
 resource "aws_security_group" "alb_sg" {
