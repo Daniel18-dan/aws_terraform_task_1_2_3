@@ -1,10 +1,23 @@
 pipeline {
   agent any
 
+  parameters {
+    choice(
+      name: 'ENVIRONMENT',
+      choices: ['DEV', 'UAT', 'PROD'],
+      description: 'Select environment'
+    )
+    choice(
+      name: 'ACTION',
+      choices: ['plan', 'apply'],
+      description: 'Terraform action'
+    )
+  }
+
   environment {
-    AWS_DEFAULT_REGION = 'ap-south-1'
-    AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
-    AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+    AWS_DEFAULT_REGION      = 'ap-south-1'
+    AWS_ACCESS_KEY_ID       = credentials('aws-access-key-id')
+    AWS_SECRET_ACCESS_KEY   = credentials('aws-secret-access-key')
   }
 
   stages {
@@ -27,26 +40,39 @@ pipeline {
 
     stage('Terraform Plan') {
       steps {
-        sh '''
+        sh """
           cd task-03
-          terraform plan -out=tfplan
-        '''
+          terraform plan -var="environment=${ENVIRONMENT}"
+        """
       }
     }
 
     stage('Manual Approval') {
+      when {
+        allOf {
+          expression { params.ACTION == 'apply' }
+          expression { params.ENVIRONMENT == 'UAT' || params.ENVIRONMENT == 'PROD' }
+        }
+      }
       steps {
-        input message: 'Terraform plan completed. Do you want to APPLY changes?',
-              ok: 'Approve & Apply'
+        input message: "Approve Terraform APPLY for ${ENVIRONMENT} environment?"
       }
     }
 
     stage('Terraform Apply') {
+      when {
+        allOf {
+          expression { params.ACTION == 'apply' }
+          expression {
+            params.ENVIRONMENT != 'PROD' || env.BRANCH_NAME == 'main'
+          }
+        }
+      }
       steps {
-        sh '''
+        sh """
           cd task-03
-          terraform apply tfplan
-        '''
+          terraform apply -auto-approve -var="environment=${ENVIRONMENT}"
+        """
       }
     }
   }
