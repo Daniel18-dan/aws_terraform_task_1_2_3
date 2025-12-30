@@ -26,15 +26,18 @@ resource "aws_security_group" "allow_ssh_jenkins" {
 resource "aws_instance" "ec2" {
   ami           = var.ami_id
   instance_type = var.i_type
+
   vpc_security_group_ids = [
     aws_security_group.allow_ssh_jenkins.id
   ]
 
-tags = {
-  Name        = "terraform-ec2-${var.environment}"
-  Environment = var.environment
-  Owner       = var.owner
+  tags = {
+    Name        = "terraform-ec2-${var.environment}"
+    Environment = var.environment
+    Owner       = var.owner
+  }
 }
+
 
 
 #SG for alb
