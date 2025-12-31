@@ -4,7 +4,7 @@ variable "ami_id" {
   type        = string
 }
 
-variable "i_type" {
+variable "instance_type" {
   description = "EC2 instance type"
   type        = string
 }
