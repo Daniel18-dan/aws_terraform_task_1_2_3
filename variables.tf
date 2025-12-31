@@ -9,7 +9,7 @@ variable "ami_id" {
   type        = string
 }
 
-variable "i_type" {
+variable "instance_type" {
   description = "instance type"
   type        = string
 }
