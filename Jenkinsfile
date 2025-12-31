@@ -15,14 +15,14 @@ pipeline {
   }
 
   environment {
-    AWS_DEFAULT_REGION      = 'ap-south-1'
-    AWS_ACCESS_KEY_ID       = credentials('aws-access-key-id')
-    AWS_SECRET_ACCESS_KEY   = credentials('aws-secret-access-key')
+    AWS_DEFAULT_REGION    = 'ap-south-1'
+    AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
+    AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
   }
 
   stages {
 
-    stage('Clone Repo') {
+    stage('Clone Repository') {
       steps {
         git branch: 'main',
             url: 'https://github.com/Daniel18-dan/aws_terraform_task_1_2_3.git'
@@ -49,10 +49,7 @@ pipeline {
 
     stage('Manual Approval') {
       when {
-        allOf {
-          expression { params.ACTION == 'apply' }
-          expression { params.ENVIRONMENT == 'UAT' || params.ENVIRONMENT == 'PROD' }
-        }
+        expression { params.ACTION == 'apply' }
       }
       steps {
         input message: "Approve Terraform APPLY for ${ENVIRONMENT} environment?"
@@ -61,17 +58,12 @@ pipeline {
 
     stage('Terraform Apply') {
       when {
-        allOf {
-          expression { params.ACTION == 'apply' }
-          expression {
-            params.ENVIRONMENT != 'PROD' || env.BRANCH_NAME == 'main'
-          }
-        }
+        expression { params.ACTION == 'apply' }
       }
       steps {
         sh """
           cd task-03
-          terraform apply -auto-approve -var="environment=${ENVIRONMENT}"
+          terraform apply -var="environment=${ENVIRONMENT}"
         """
       }
     }
