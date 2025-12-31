@@ -63,7 +63,7 @@ pipeline {
       steps {
         sh """
           cd task-03
-          terraform apply -var="environment=${ENVIRONMENT}"
+          terraform apply -input=false -var="environment=${ENVIRONMENT}"
         """
       }
     }
