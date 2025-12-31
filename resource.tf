@@ -1,5 +1,6 @@
 resource "aws_security_group" "allow_ssh_jenkins" {
-  name = "allow_ssh_jenkins"
+  name   = "allow_ssh_jenkins"
+  vpc_id = data.aws_vpc.default.id
 
   ingress {
     from_port   = 22
@@ -9,9 +10,9 @@ resource "aws_security_group" "allow_ssh_jenkins" {
   }
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
 
@@ -21,6 +22,8 @@ resource "aws_security_group" "allow_ssh_jenkins" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  depends_on = [aws_security_group.alb_sg]
 }
 
 resource "aws_instance" "ec2" {
